@@ -1,8 +1,9 @@
 #!venv/bin/python
+import csv
 import sys
 import configparser
 from datetime import datetime
-
+from google_sheet_api import GoogleSheetApi
 
 CONFIG = configparser.ConfigParser()
 CONFIG.read("config.ini")
@@ -26,12 +27,21 @@ def format_line(line):
 
 
 def prepare_csv(csv_path):
-    with open(csv_path, "r") as csv, open(CONFIG["data"]["csv"], "w+") as file:
-        file.writelines([format_line(line) for line in csv.readlines()])
+    with open(csv_path, "r") as csv_file, open(CONFIG["data"]["csv"], "w+") as file:
+        file.writelines([format_line(line) for line in csv_file.readlines()])
+
+
+def save_csv(data, file_name):
+    with open(file_name, "w+") as file:
+        csv_writer = csv.writer(file, delimiter=";")
+        csv_writer.writerows(data)
 
 
 def main():
     prepare_csv(get_filename())
+    sheet = GoogleSheetApi()
+    save_csv(sheet.get_ignores(), CONFIG["data"]["ignores"])
+    save_csv(sheet.get_filters(), CONFIG["data"]["filters"])
 
 
 if __name__ == "__main__":

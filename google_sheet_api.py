@@ -1,8 +1,8 @@
 import os
+import os.path
 import pickle
 import configparser
-import os.path
-from googleapiclient.discovery import build
+from googleapiclient.discovery import build, Resource
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 
@@ -22,8 +22,8 @@ SHEETS_API_VERSION = "v4"
 
 class GoogleSheetApi:
     def __init__(self) -> None:
-        self.service = None
-        self.sheet = None
+        self.service: Resource
+        self.sheet: Resource
         self._connect()
 
     def _connect(self) -> None:
@@ -48,14 +48,14 @@ class GoogleSheetApi:
         self.service = build('sheets', SHEETS_API_VERSION, credentials=credentials)
         self.sheet = self.service.spreadsheets()
 
-    def _get(self, sheet_id: str, sheet_range: str) -> dict:
+    def _get(self, sheet_id: str, sheet_range: str) -> tuple:
         data = self.sheet.values().get(spreadsheetId=sheet_id, range=sheet_range).execute().get('values', [])
-        return {key: value.lower().split(";") for key, value in data}
+        return tuple((key, "|".join(value.lower().split(";"))) for key, value in data)
 
-    def get_filters(self) -> dict:
+    def get_filters(self) -> tuple:
         return self._get(SAMPLE_SPREADSHEET_ID, FILTERS_RANGE)
 
-    def get_ignores(self) -> dict:
+    def get_ignores(self) -> tuple:
         return self._get(SAMPLE_SPREADSHEET_ID, IGNORE_FILTER)
 
     def update_sheet(self, summary_data, month):
@@ -73,3 +73,9 @@ class GoogleSheetApi:
     def _get_sheet_range_by_month(month):
         row = month + 1
         return f"Expenses!A{row}:J{row}"
+
+
+if __name__ == "__main__":
+    csv = GoogleSheetApi()
+    k = csv.get_ignores()
+    print(k)
