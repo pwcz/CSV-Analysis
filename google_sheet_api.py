@@ -1,3 +1,4 @@
+import csv
 import os
 import os.path
 import pickle
@@ -58,7 +59,7 @@ class GoogleSheetApi:
     def get_ignores(self) -> tuple:
         return self._get(SAMPLE_SPREADSHEET_ID, IGNORE_FILTER)
 
-    def update_sheet(self, summary_data, month):
+    def update_sheet(self, summary_data):
         values = [
             summary_data,
         ]
@@ -66,16 +67,21 @@ class GoogleSheetApi:
             'values': values
         }
         self.service.spreadsheets().values().update(spreadsheetId=SAMPLE_SPREADSHEET_ID,
-                                                    range=self._get_sheet_range_by_month(month),
+                                                    range=self._get_sheet_range_by_month(summary_data[0]),
                                                     valueInputOption="RAW", body=body).execute()
+
+    def upload_result(self):
+        with open(CONFIG["data"]["result"], "r") as data:
+            result = csv.reader(data, delimiter=';', quoting=csv.QUOTE_NONNUMERIC)
+            for row in result:
+                self.update_sheet(row)
 
     @staticmethod
     def _get_sheet_range_by_month(month):
-        row = month + 1
+        row = int(month + 1)
         return f"Expenses!A{row}:J{row}"
 
 
 if __name__ == "__main__":
-    csv = GoogleSheetApi()
-    k = csv.get_ignores()
-    print(k)
+    sheet = GoogleSheetApi()
+    sheet.upload_result()

@@ -1,4 +1,5 @@
 import csv
+import functools
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 import pyspark.sql.functions as F
@@ -12,7 +13,12 @@ def load_data(spark, config):
     transactions = spark.read.csv(config["data"]["csv"], sep=";", schema=DATA_SCHEMA)
     filters = spark.read.csv(config["data"]["filters"], sep=";", schema=FILERS_SCHEMA)
     ignores = spark.read.csv(config["data"]["ignores"], sep=";", schema=FILERS_SCHEMA)
-    return transactions, filters, ignores
+    year = int(config["data"]["year"])
+    return transactions, filters, ignores, year
+
+
+def combine_filters(filters):
+    return functools.reduce(lambda a, b: a | b, filters)
 
 
 def filter_by_time(data, year, month):
@@ -22,15 +28,20 @@ def filter_by_time(data, year, month):
     return data.filter(data.data.between(start, stop))
 
 
-def process_data(transactions, filters, ignores):
-    transactions = transactions.filter(~transactions.info.rlike(ignores.select(ignores.reg_filter).collect()[0][0]))
+def process_data(transactions, filters, ignores, year):
+    ignore_filter = transactions.info.rlike(ignores.select(ignores.reg_filter).collect()[0][0])
+    transactions = transactions.filter(~ignore_filter)
     filters = [x[0] for x in filters.select(filters.reg_filter).collect()]
     data = list()
     for month in range(1, 13):
-        df = filter_by_time(transactions, 2020, month)
+        df = filter_by_time(transactions, year, month)
         result = [df.filter(df.info.rlike(x)).agg(F.sum("amount")).collect()[0][0] for x in filters]
-        result = [abs(x) if x else 0 for x in result]
+        result = [abs(x)/100. if x else 0 for x in result]
         data.append([month] + result + [sum(result)])
+        if False:
+            print(f"YEAR: {year} month {month}")
+            not_matched = df.filter(~combine_filters([df.info.rlike(x) for x in filters] + [ignore_filter]))
+            not_matched.show(not_matched.count(), truncate=False)
 
     return data
 
