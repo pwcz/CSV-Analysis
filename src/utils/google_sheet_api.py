@@ -70,18 +70,21 @@ class GoogleSheetApi:
                                                     range=self._get_sheet_range_by_month(summary_data[0]),
                                                     valueInputOption="RAW", body=body).execute()
 
-    def upload_result(self):
+    def upload_result(self, month=None):
         with open(CONFIG["data"]["result"], "r") as data:
-            result = csv.reader(data, delimiter=';', quoting=csv.QUOTE_NONNUMERIC)
-            for row in result:
-                self.update_sheet(row)
+            result = list(csv.reader(data, delimiter=';', quoting=csv.QUOTE_NONNUMERIC))
+            if month:
+                self.update_sheet(result[month-1])
+            else:
+                for row in result:
+                    self.update_sheet(row)
 
     @staticmethod
     def _get_sheet_range_by_month(month):
         row = int(month + 1)
-        return f"Expenses!A{row}:J{row}"
+        return f"Expenses 2021!A{row}:J{row}"
 
 
 if __name__ == "__main__":
     sheet = GoogleSheetApi()
-    sheet.upload_result()
+    sheet.upload_result(4)

@@ -35,13 +35,18 @@ def process_data(transactions, filters, ignores, year):
     data = list()
     for month in range(1, 13):
         df = filter_by_time(transactions, year, month)
-        result = [df.filter(df.info.rlike(x)).agg(F.sum("amount")).collect()[0][0] for x in filters]
+        result = [df.filter(df.info.rlike(x)) for x in filters]
+        for item in result:
+            if item.count() != 0:
+                item.sort(F.desc("amount")).show(item.count(), truncate=False)
+        result = [x.agg(F.sum("amount")).collect()[0][0] for x in result]
         result = [abs(x)/100. if x else 0 for x in result]
         data.append([month] + result + [sum(result)])
-        if False:
+        if True:
             print(f"YEAR: {year} month {month}")
             not_matched = df.filter(~combine_filters([df.info.rlike(x) for x in filters] + [ignore_filter]))
-            not_matched.show(not_matched.count(), truncate=False)
+            if not_matched.count() != 0:
+                not_matched.show(not_matched.count(), truncate=False)
 
     return data
 

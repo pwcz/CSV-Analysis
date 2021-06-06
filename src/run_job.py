@@ -5,15 +5,15 @@ from pyspark.sql import SparkSession
 
 
 CONFIG = configparser.ConfigParser()
-CONFIG.read("../config.ini")
+CONFIG.read("config.ini")
 
 
-def main():
+def run_job():
     """ Main function excecuted by spark-submit command"""
 
     spark = SparkSession.builder.appName(CONFIG["spark"]["app_name"]).getOrCreate()
     job_name = "analyse_transaction"
-    job_module = importlib.import_module(f"jobs.{job_name}")
+    job_module = importlib.import_module(f"src.jobs.{job_name}")
 
     start_time = time.time()
     job_module.run_job(spark, CONFIG)
@@ -21,4 +21,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    run_job()
