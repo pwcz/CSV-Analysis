@@ -132,3 +132,4 @@ token.pickle
 config.ini
 *.csv
 .idea/
+data

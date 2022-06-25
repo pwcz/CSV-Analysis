@@ -4,28 +4,28 @@ import sys
 import configparser
 from datetime import datetime
 from src.utils.google_sheet_api import GoogleSheetApi
+from src.utils.transactions_db import get_transactions
 
 CONFIG = configparser.ConfigParser()
 CONFIG.read("config.ini")
 
 
 class PrepareData:
-    def __init__(self, data_file):
-        self.file = data_file
+    def __init__(self, year, month):
+        self.year = year
+        self.month = month
 
     @staticmethod
-    def format_line(line):
-        data = line.split(";")
-        date = int(datetime.strptime(data[1], "%d-%m-%Y").timestamp())
-        try:
-            amount = int(float(data[5].replace(",", ".")) * 100.)
-        except ValueError:
-            amount = 0
-        return f"{date};{data[2].lower()} {data[3].lower()};{amount}\n"
+    def format_line(transaction):
+        description = transaction["description"].lower()
+        amount = transaction["amount"]
+        date = int(transaction["date"].timestamp())
+        return f"{date};{description};{amount}\n"
 
     def prepare_csv(self):
-        with open(self.file, "r") as csv_file, open(CONFIG["data"]["csv"], "w+") as file:
-            file.writelines([PrepareData.format_line(line) for line in csv_file.readlines()])
+        with open(CONFIG["data"]["csv"], "w+") as file:
+            transactions = get_transactions(self.year, self.month)
+            file.writelines([PrepareData.format_line(line) for line in transactions])
 
     @staticmethod
     def save_csv(data, file_name):

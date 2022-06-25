@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Upload page</title>
+        <link rel="stylesheet" type="text/css" href="StyleSheet.css" />
+        <link rel="icon" type="image/x-icon" href="favicon.ico">
+    </head>
+    <body>
+        <div id="app" v-cloak>
+        <input type="file" @change="uploadFile" ref="file">
+        <button @click="submitFile">Upload!</button>
+
+        </br>
+        status: {{ status_message }} </br>
+        type: {{ transaction_type }} </br>
+        new transactions: {{ new_transactions }} </br>
+        duplicates: {{ duplicates }} </br>
+        </div>
+    </body>
+
+    <script src="https://unpkg.com/vue/dist/vue.global.prod.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script type="text/javascript" src="main.js"></script>
+
+</html>

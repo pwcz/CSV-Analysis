@@ -66,6 +66,7 @@ class GoogleSheetApi:
         body = {
             'values': values
         }
+        print(body)
         self.service.spreadsheets().values().update(spreadsheetId=SAMPLE_SPREADSHEET_ID,
                                                     range=self._get_sheet_range_by_month(summary_data[0]),
                                                     valueInputOption="RAW", body=body).execute()
@@ -82,7 +83,7 @@ class GoogleSheetApi:
     @staticmethod
     def _get_sheet_range_by_month(month):
         row = int(month + 1)
-        return f"Expenses 2021!A{row}:J{row}"
+        return f"Expenses 2022!A{row}:K{row}"
 
 
 if __name__ == "__main__":

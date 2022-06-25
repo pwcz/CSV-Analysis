@@ -43,7 +43,7 @@ def process_data(transactions, filters, ignores, year):
         result = [abs(x)/100. if x else 0 for x in result]
         data.append([month] + result + [sum(result)])
         if True:
-            print(f"YEAR: {year} month {month}")
+            print(f"YEAR: {year} month {month}\nNot matched:\n")
             not_matched = df.filter(~combine_filters([df.info.rlike(x) for x in filters] + [ignore_filter]))
             if not_matched.count() != 0:
                 not_matched.show(not_matched.count(), truncate=False)

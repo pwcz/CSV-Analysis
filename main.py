@@ -4,9 +4,7 @@ from src.run_job import run_job
 from src.utils.google_sheet_api import GoogleSheetApi
 
 
-def execute_pipeline(file_name: str):
-    PrepareData(file_name).prepare_data()
-    run_job()
+def execute_pipeline():
     month = input("provide month number if you want to update sheet: ")
     if month == "\n":
         print("done.")
@@ -17,13 +15,13 @@ def execute_pipeline(file_name: str):
             print("invalid value")
             sys.exit(-1)
 
+    PrepareData(2022, month).prepare_data()
+    run_job()
+
+    if "y" == input("upload result to google sheet? (y/n)"):
         sheet = GoogleSheetApi()
         sheet.upload_result(month)
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print(f"usage: {sys.argv[0]} <file name>")
-        sys.exit(-1)
-    else:
-        execute_pipeline(sys.argv[1])
+    execute_pipeline()
