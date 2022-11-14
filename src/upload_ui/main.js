@@ -1,7 +1,7 @@
 let app = Vue.createApp({
     data: function(){
         return {
-            status_message: "hello, please upload file",
+            status_message: "Select file with transactions",
             transaction_type: "",
             new_transactions: 0,
             duplicates: 0,
@@ -17,7 +17,7 @@ let app = Vue.createApp({
             const formData = new FormData();
             formData.append('in_file', this.Images);
             const headers = { 'Content-Type': 'multipart/form-data', 'accept': 'application/json' };
-            const res = await axios.post('http://127.0.0.1:8000/upload_file', formData, { headers });
+            const res = await axios.post('/upload_file', formData, { headers });
             console.log(res);
             this.status_message = res.data.status;
             this.new_transactions = res.data.inserted;

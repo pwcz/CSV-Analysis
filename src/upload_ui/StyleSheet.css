@@ -1,0 +1,23 @@
+body {
+    background-color: white;
+}
+
+[v-cloak] {
+    display: none;
+}
+input {
+    text-align: center;
+    display: block;
+    margin-bottom:10px;
+}
+
+.upload_box
+{
+    width: 30%;
+    clear: both;
+    display: block;
+    text-align: left;
+    margin-left: 35%;
+    margin-right: 35%;
+    margin-top: 100px;
+}

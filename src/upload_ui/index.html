@@ -7,6 +7,9 @@
     </head>
     <body>
         <div id="app" v-cloak>
+
+        <div class="upload_box">
+
         <input type="file" @change="uploadFile" ref="file">
         <button @click="submitFile">Upload!</button>
 
@@ -15,6 +18,8 @@
         type: {{ transaction_type }} </br>
         new transactions: {{ new_transactions }} </br>
         duplicates: {{ duplicates }} </br>
+
+        </div>
         </div>
     </body>
 

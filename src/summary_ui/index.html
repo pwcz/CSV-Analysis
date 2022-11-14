@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Upload page</title>
+        <link rel="stylesheet" type="text/css" href="StyleSheet.css" />
+        <link rel="icon" type="image/x-icon" href="favicon.ico">
+        <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+    </head>
+    <body>
+        <div id="app" v-cloak data-app>
+
+        <div class="container">
+        <form>
+           <label for="ldate">Select start date:</label><br>
+           <input type="date" id="ldate" @change="dataSelect" ref="data_start">
+        </form>
+        </div>
+
+        <hr>
+
+        <v-data-table
+          :headers="headers"
+          :items="desserts"
+          :items-per-page="10"
+          class="elevation-1">
+        </v-data-table>
+
+        <hr>
+
+        <div class="category_select">
+        <span>Select category for more details:</span> </br>
+        <select v-model="selected" @change="onChange($event)">
+            <option value="default" disabled>Select category</option>
+            <option v-for="option in options">
+                {{ option }}
+            </option>
+        </select>
+        </br>
+        </div>
+
+        <v-data-table
+          :headers="details_header"
+          :items="details_data"
+          :items-per-page="10"
+          class="elevation-1">
+        </v-data-table>
+
+        </div>
+    </body>
+
+<!--    <script src="https://unpkg.com/vue/dist/vue.global.prod.js"></script>-->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+
+    <script type="text/javascript" src="main.js"></script>
+
+</html>

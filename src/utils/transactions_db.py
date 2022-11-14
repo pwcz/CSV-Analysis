@@ -30,3 +30,10 @@ def get_transactions(year: int, month: int):
     start_date = datetime(year=year, month=month, day=1)
     stop_date = start_date + relativedelta(months=1)
     return transactions_db.post.find({"date": {"$gte": start_date, "$lt": stop_date}})
+
+
+def get_transactions_with_filter(year: int, month: int, filter_regex: str):
+    start_date = datetime(year=year, month=month, day=1)
+    stop_date = start_date + relativedelta(months=1)
+    return transactions_db.post.find({"date": {"$gte": start_date, "$lt": stop_date}, "description": {
+        "$regex": filter_regex, "$options": "i"}})

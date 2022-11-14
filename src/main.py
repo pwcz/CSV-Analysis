@@ -3,7 +3,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 
 from api import upload
-
+from api import month_summary
 
 app = FastAPI()
 
@@ -16,7 +16,9 @@ app.add_middleware(
 )
 
 app.include_router(upload.router)
-app.mount("/upload", StaticFiles(directory="ui", html=True), name="ui")
+app.include_router(month_summary.router)
+app.mount("/upload", StaticFiles(directory="upload_ui", html=True), name="ui")
+app.mount("/summary", StaticFiles(directory="summary_ui", html=True), name="ui")
 
 if __name__ == "__main__":
     import uvicorn
