@@ -1,7 +1,7 @@
 from fastapi import APIRouter, UploadFile, File
 import aiofiles
 
-from utils.statement import process_statement
+from src.utils.statement import process_statement
 
 router = APIRouter()
 

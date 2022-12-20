@@ -1,7 +1,7 @@
 import csv
 from datetime import datetime
 
-from utils.transactions_db import insert_transactions
+from src.utils.transactions_db import insert_transactions
 
 
 def is_mbank_csv(filename: str):

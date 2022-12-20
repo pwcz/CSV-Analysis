@@ -133,3 +133,4 @@ config.ini
 *.csv
 .idea/
 data
+config/

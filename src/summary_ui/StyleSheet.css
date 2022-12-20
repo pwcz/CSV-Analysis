@@ -30,8 +30,22 @@ input {
 
 .category_select {
    text-align: center;
+   padding: 15px;
 }
 
 .category_select select {
     border: 2px solid black;
+}
+
+.submit_button
+{
+    border: 2px solid black;
+    padding: 5px;
+    border-radius: 4px;
+    background-color: #e7e7e7;
+}
+
+.submit_button.enabled
+{
+    background-color: #4CAF50;
 }

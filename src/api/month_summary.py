@@ -1,9 +1,15 @@
 from fastapi import APIRouter
+from pydantic import BaseModel
+from typing import List
 
-from utils.google_sheet_api import GoogleSheetApi
-from utils.transactions_db import get_transactions, get_transactions_with_filter
+from src.utils.google_sheet_api import GoogleSheetApi
+from src.utils.transactions_db import get_transactions, get_transactions_with_filter
 
 router = APIRouter()
+
+
+class TransactionsSummary(BaseModel):
+    summary: List[float]
 
 
 def format_transaction(transaction):
@@ -38,3 +44,14 @@ async def post_upload_file(year: int, month: int):
     ]
 
     return result
+
+
+@router.post("/summary/{year}/{month}")
+async def handle_post_summary_data(year: int, month: int, item: TransactionsSummary):
+    data = item.summary
+    data.append(sum(data))
+    try:
+        GoogleSheetApi().update_sheet(year, month, item.summary)
+        return {"status": "ok"}
+    except KeyError:
+        return {"status": "error", "details": "key error"}

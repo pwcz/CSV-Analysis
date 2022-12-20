@@ -47,7 +47,10 @@
           :items-per-page="10"
           class="elevation-1">
         </v-data-table>
-
+        </br>
+        <div class="container">
+        <button :class="button_class" @click="submit_excel" :disabled="button_disabled">Submit to spreadsheet</button>
+        </div>
         </div>
     </body>
 

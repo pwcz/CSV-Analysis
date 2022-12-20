@@ -10,14 +10,14 @@ from google.auth.transport.requests import Request
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 CONFIG = configparser.ConfigParser()
-CONFIG.read("config.ini")
+CONFIG.read("config/config.ini")
 
 # The ID and range of a sample spreadsheet.
 SAMPLE_SPREADSHEET_ID = CONFIG["sheet"]["id"]
 FILTERS_RANGE = CONFIG["sheet"]["filters"]
 IGNORE_FILTER = CONFIG["sheet"]["ignore"]
-TOKEN_PICKLE = "token.pickle"
-CREDENTIALS_JSON = "credentials.json"
+TOKEN_PICKLE = "config/token.pickle"
+CREDENTIALS_JSON = "config/credentials.json"
 SHEETS_API_VERSION = "v4"
 
 
@@ -59,7 +59,7 @@ class GoogleSheetApi:
     def get_ignores(self) -> tuple:
         return self._get(SAMPLE_SPREADSHEET_ID, IGNORE_FILTER)
 
-    def update_sheet(self, summary_data):
+    def update_sheet(self, year, month, summary_data):
         values = [
             summary_data,
         ]
@@ -68,24 +68,9 @@ class GoogleSheetApi:
         }
         print(body)
         self.service.spreadsheets().values().update(spreadsheetId=SAMPLE_SPREADSHEET_ID,
-                                                    range=self._get_sheet_range_by_month(summary_data[0]),
+                                                    range=self._get_sheet_range_by_month(year, month),
                                                     valueInputOption="RAW", body=body).execute()
 
-    def upload_result(self, month=None):
-        with open(CONFIG["data"]["result"], "r") as data:
-            result = list(csv.reader(data, delimiter=';', quoting=csv.QUOTE_NONNUMERIC))
-            if month:
-                self.update_sheet(result[month-1])
-            else:
-                for row in result:
-                    self.update_sheet(row)
-
     @staticmethod
-    def _get_sheet_range_by_month(month):
-        row = int(month + 1)
-        return f"Expenses 2022!A{row}:K{row}"
-
-
-if __name__ == "__main__":
-    sheet = GoogleSheetApi()
-    sheet.upload_result(4)
+    def _get_sheet_range_by_month(year, month):
+        return f"Expenses {year}!A{month+1}:K{month+1}"

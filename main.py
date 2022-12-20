@@ -1,27 +1,25 @@
-import sys
-from src.utils.prepare_data import PrepareData
-from src.run_job import run_job
-from src.utils.google_sheet_api import GoogleSheetApi
+from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
 
+from src.api import upload
+from src.api import month_summary
 
-def execute_pipeline():
-    month = input("provide month number if you want to update sheet: ")
-    if month == "\n":
-        print("done.")
-    else:
-        try:
-            month = int(month)
-        except ValueError:
-            print("invalid value")
-            sys.exit(-1)
+app = FastAPI()
 
-    PrepareData(2022, month).prepare_data()
-    run_job()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-    if "y" == input("upload result to google sheet? (y/n)"):
-        sheet = GoogleSheetApi()
-        sheet.upload_result(month)
-
+app.include_router(upload.router)
+app.include_router(month_summary.router)
+app.mount("/upload", StaticFiles(directory="src/upload_ui", html=True), name="ui")
+app.mount("/summary", StaticFiles(directory="src/summary_ui", html=True), name="ui")
 
 if __name__ == "__main__":
-    execute_pipeline()
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
