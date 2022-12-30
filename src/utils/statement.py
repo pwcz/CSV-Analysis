@@ -35,7 +35,7 @@ def process_mbank(filename: str):
     return [{"date": datetime.strptime(operation["Data operacji"], "%Y-%m-%d"),
              "description": operation["Opis operacji"],
              "amount": get_unified_amount(operation["Kwota"])
-             } for operation in data]
+             } for operation in data if "transakcja nierozliczona" not in operation["Opis operacji"]]
 
 
 def process_santander(filename: str):

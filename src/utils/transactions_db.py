@@ -37,3 +37,12 @@ def get_transactions_with_filter(year: int, month: int, filter_regex: str):
     stop_date = start_date + relativedelta(months=1)
     return transactions_db.post.find({"date": {"$gte": start_date, "$lt": stop_date}, "description": {
         "$regex": filter_regex, "$options": "i"}})
+
+
+def cleanup_database():
+    my_query = {"description": {"$regex": "transakcja nierozliczona", "$options": "i"}}
+    transactions_db.post.delete_many(my_query)
+
+
+if __name__ == "__main__":
+    cleanup_database()
