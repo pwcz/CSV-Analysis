@@ -7,7 +7,7 @@ services:
     - PUID=1000
     - PGID=1000
     volumes:
-    - /home/pawel/PycharmProjects/CSV-Analysis/data:/data/db
+    - './data:/data/db'
     ports:
     - "27017:27017"
     restart: unless-stopped

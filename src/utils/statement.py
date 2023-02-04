@@ -5,7 +5,7 @@ from src.utils.transactions_db import insert_transactions
 
 
 def is_mbank_csv(filename: str):
-    with open(filename, "r", encoding="ISO-8859-2") as file:
+    with open(filename, "r", encoding="utf-8-sig") as file:
         csv_reader = csv.reader(file, delimiter=';')
         first_row = next(csv_reader)
         return first_row[0].startswith("mBank")
@@ -26,7 +26,7 @@ def get_unified_amount(value: str) -> int:
 
 
 def process_mbank(filename: str):
-    with open(filename, "r", encoding="ISO-8859-2") as file:
+    with open(filename, "r", encoding="utf-8-sig") as file:
         csv_reader = csv.reader(file, delimiter=';')
         for line in csv_reader:
             if len(line) > 0 and "#Data operacji" in line[0]:
@@ -62,3 +62,8 @@ def process_statement(filename: str):
     response.update({"status": "ok", "type": t_type})
 
     return response
+
+
+if __name__ == "__main__":
+    import sys
+    print(process_statement(sys.argv[1]))
